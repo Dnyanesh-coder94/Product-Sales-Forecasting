@@ -1,0 +1,59 @@
+/* Glassmorphism style */
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
+
+/* Gradient button */
+.btn-gradient {
+  background: linear-gradient(45deg, #007bff, #00c6ff);
+  color: #fff;
+  font-weight: bold;
+  transition: transform 0.2s ease-in-out;
+}
+.btn-gradient:hover {
+  transform: scale(1.05);
+}
+
+/* Forecast chart container */
+.chart-container {
+  position: relative;
+}
+.chart-img {
+  transition: transform 0.3s;
+}
+.chart-img:hover {
+  transform: scale(1.02);
+}
+.chart-expand {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+}
+
+/* Fade-in animation */
+.fade-in {
+  animation: fadeIn 0.8s ease-in-out;
+}
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+/* Toast notification */
+.toast-msg {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #198754;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 2000;
+}
+.toast-show {
+  opacity: 1 !important;
+}

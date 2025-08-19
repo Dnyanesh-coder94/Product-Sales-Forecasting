@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="forecast-app">
+  <!-- Input Card -->
+  <div class="card glass shadow-lg border-0">
+    <div class="card-body">
+      <h4 class="fw-bold mb-3">⚡ Run Forecast</h4>
+      {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" class="row g-4">
+        <div class="col-md-3">
+          <label class="form-label">Segment</label>
+          <select class="form-select form-control-lg" name="entity" required>
+            {% for e in entities %}
+              <option value="{{ e }}" {% if e==entity %}selected{% endif %}>{{ e }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+
+        <div class="col-md-3">
+          <label class="form-label">Target</label>
+          <select class="form-select form-control-lg" name="target" required>
+            {% for t in targets %}
+              <option value="{{ t }}" {% if t==target_choice %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Model</label>
+          <select class="form-select form-control-lg" name="model" required>
+            {% for m in models %}
+              <option value="{{ m }}" {% if m==model_choice %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Horizon (days)</label>
+          <input type="number" min="7" max="61" step="1" class="form-control form-control-lg"
+                 name="horizon" value="{{ horizon or default_horizon }}" required>
+        </div>
+
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-gradient btn-lg px-4">
+            🚀 Run Forecast
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if submitted %}
+  <!-- Forecast Section -->
+  <div class="mt-5">
+    
+    <!-- Chart Card -->
+    <div class="card shadow-sm border-0 mb-4 fade-in">
+      <div class="card-body">
+        <h5 class="card-title">📊 Forecast Visualization</h5>
+        <p class="small text-muted">
+          <strong>Model:</strong> {{ model_choice }} | 
+          <strong>Target:</strong> {{ target_choice }} | 
+          <strong>Entity:</strong> {{ entity }} | 
+          <strong>Horizon:</strong> {{ horizon }} days
+        </p>
+        <div class="chart-container">
+          <img
+            src="data:image/png;base64,{{ plot_b64 }}"
+            alt="Forecast Plot"
+            class="img-fluid rounded shadow chart-img"
+          />
+          <button class="btn btn-outline-light chart-expand" data-bs-toggle="modal" data-bs-target="#chartModal">
+            🔍 Expand
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAPE Card -->
+    <div class="card shadow-sm border-0 mb-4 fade-in">
+      <div class="card-body">
+        <h5 class="card-title">📑 Forecast Report</h5>
+        {% if mape_info.header %}
+          <div class="alert alert-info fw-bold">{{ mape_info.header }}</div>
+          <ul>
+            {% for line in mape_info.lines %}
+              <li>{{ line }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="alert alert-secondary">MAPE not available.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-sm border-0 fade-in">
+      <div class="card-body">
+        <h5 class="card-title d-flex justify-content-between">
+          📋 Forecast Table
+          <button class="btn btn-sm btn-outline-primary" id="toggleTable">Toggle</button>
+        </h5>
+        <div id="forecastTable" class="table-responsive">
+          {{ table_html|safe }}
+        </div>
+        <button
+          id="downloadCsvBtn"
+          class="btn btn-success mt-3"
+          data-filename="forecast.csv"
+          data-csv-b64="{{ csv_b64 }}"
+        >
+          ⬇️ Download CSV
+        </button>
+      </div>
+    </div>
+
+    <div id="toast" class="toast-msg">✅ Download started...</div>
+
+    <!-- Chart Modal -->
+    <div class="modal fade" id="chartModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark">
+          <div class="modal-body text-center">
+            <img src="data:image/png;base64,{{ plot_b64 }}" class="img-fluid rounded">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
